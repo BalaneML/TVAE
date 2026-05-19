@@ -119,7 +119,7 @@ class TVAE:
             compress_dims: tuple=(128, 128),
             decompress_dims: tuple=(128, 128),
 
-            l2scale=1e-5,
+            l2scale=1e-3,
             batch_size=500,
             epochs=300,
             loss_factor=2,
@@ -194,7 +194,7 @@ class TVAE:
                     self.data_transformer.output_info_list,
                     self.loss_factor
                 )
-                loss = recon_loss + kl_loss  #  バッチの損失，ELBOの最小化
+                loss = recon_loss + kl_loss  #  バッチの損失，ELBO
                 
                 loss.backward()  # 逆伝播で勾配計算
                 optimizerAE.step()  # パラメータ更新
@@ -226,7 +226,7 @@ class TVAE:
             samples (int):
                 Number of rows to sample
         Return:
-
+            np.array or pd.DataFrame
         '''
         self.decoder.eval()
         steps = samples // self.batch_size + 1
@@ -236,6 +236,7 @@ class TVAE:
             for _ in range(steps):
                 mean = torch.zeros(self.batch_size, self.latent_dim)
                 std = mean + 1
+                
                 noise = torch.normal(mean=mean, std=std).to(self._device)
                 fake, deltas = self.decoder(noise)
                 fake = torch.tanh(fake)
