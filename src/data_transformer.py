@@ -39,12 +39,13 @@ class DataTransformer:
 
         # ベイズ混合ガウスモデルのインスタンスを作成 -> 連続値列の各ガウス分布の平均，分散，重みを推定
         bayesian_gmm = ClusterBasedNormalizer(
-            model_missing_values='from_column',
+            # model_missing_values='from_column',
+            missing_value_generation='from_column',
             max_clusters=min(len(data), self.max_clusters),
             weight_threshold=self.wight_threshold
         )
         bayesian_gmm.fit(data, column_name)
-        num_componets = sum(bayesian_gmm.valid_component_indicatior)
+        num_componets = sum(bayesian_gmm.valid_component_indicator)
 
         return ColumnTransformInfo(
             column_name=column_name,
