@@ -243,4 +243,5 @@ class TVAE:
 
             data = np.concatenate(data, axis=0)
             data = data[:samples]
-        return self.data_transformer.inverse_transform(data, deltas.cpu().numpy())
+        self.decoder.train()
+        return self.data_transformer.inverse_transform(data, deltas.detach().cpu().numpy())
